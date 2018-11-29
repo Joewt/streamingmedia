@@ -6,9 +6,9 @@ import (
 	"net/http"
 
 	"github.com/julienschmidt/httprouter"
-	"joewt.com/joe/streamingmedia/video_server/api/dbops"
-	"joewt.com/joe/streamingmedia/video_server/api/defs"
-	"joewt.com/joe/streamingmedia/video_server/api/session"
+	"github.com/yinrenxin/streamingmedia/api/dbops"
+	"github.com/yinrenxin/streamingmedia/api/defs"
+	"github.com/yinrenxin/streamingmedia/api/session"
 )
 
 func CreateUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {

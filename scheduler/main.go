@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"github.com/julienschmidt/httprouter"
-	"joewt.com/joe/streamingmedia/video_server/scheduler/taskrunner"
+	"github.com/yinrenxin/streamingmedia/scheduler/taskrunner"
 )
 
 func RegisterHandlers() *httprouter.Router {

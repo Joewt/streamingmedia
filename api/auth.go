@@ -3,8 +3,8 @@ package main
 import (
 	"net/http"
 
-	"joewt.com/joe/streamingmedia/video_server/api/defs"
-	"joewt.com/joe/streamingmedia/video_server/api/session"
+	"github.com/yinrenxin/streamingmedia/api/defs"
+	"github.com/yinrenxin/streamingmedia/api/session"
 )
 
 var HEADER_FIELD_SESSION = "X-Session-Id"

@@ -3,9 +3,10 @@ package session
 import (
 	"sync"
 	"time"
-	"joewt.com/joe/streamingmedia/video_server/api/dbops"
-	"joewt.com/joe/streamingmedia/video_server/api/defs"
-	"joewt.com/joe/streamingmedia/video_server/api/utils"
+
+	"github.com/yinrenxin/streamingmedia/api/dbops"
+	"github.com/yinrenxin/streamingmedia/api/defs"
+	"github.com/yinrenxin/streamingmedia/api/utils"
 )
 
 var sessionMap *sync.Map
@@ -15,7 +16,7 @@ func init() {
 }
 
 func nowInMilli() int64 {
-	return time.Now().UnixNano()/1000000
+	return time.Now().UnixNano() / 1000000
 }
 
 func deleteExpiredSession(sid string) {
@@ -39,7 +40,7 @@ func LoadSessionsFromDB() {
 func GenerateNewSessionId(un string) string {
 	id, _ := utils.NewUUID()
 	ct := nowInMilli()
-	ttl := ct + 30 * 60 * 1000
+	ttl := ct + 30*60*1000
 	ss := &defs.SimpleSession{Username: un, TTL: ttl}
 	sessionMap.Store(id, ss)
 	dbops.InsertSession(id, ttl, un)
@@ -52,7 +53,7 @@ func IsSessionExpired(sid string) (string, bool) {
 		ct := nowInMilli()
 		if ss.(*defs.SimpleSession).TTL < ct {
 			deleteExpiredSession(sid)
-			return "",true
+			return "", true
 		}
 		return ss.(*defs.SimpleSession).Username, false
 	}

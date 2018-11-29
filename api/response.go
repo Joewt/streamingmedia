@@ -5,7 +5,7 @@ import (
 	"io"
 	"net/http"
 
-	"joewt.com/joe/streamingmedia/video_server/api/defs"
+	"github.com/yinrenxin/streamingmedia/api/defs"
 )
 
 func sendErrorResponse(w http.ResponseWriter, errResp defs.ErrorResponse) {

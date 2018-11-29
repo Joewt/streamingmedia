@@ -1,11 +1,12 @@
 package dbops
 
 import (
-	"joewt.com/joe/streamingmedia/video_server/api/defs"
 	"database/sql"
-	"sync"
 	"log"
 	"strconv"
+	"sync"
+
+	"github.com/yinrenxin/streamingmedia/api/defs"
 )
 
 func InsertSession(sid string, ttl int64, uname string) error {
@@ -46,7 +47,6 @@ func RetrieveSession(sid string) (*defs.SimpleSession, error) {
 	defer stmtOut.Close()
 	return ss, nil
 }
-
 
 func RetrieveAllSessions() (*sync.Map, error) {
 	m := &sync.Map{}

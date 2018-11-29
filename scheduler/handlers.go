@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"github.com/julienschmidt/httprouter"
-	"joewt.com/joe/streamingmedia/video_server/scheduler/dbops"
+	"github.com/yinrenxin/streamingmedia/scheduler/dbops"
 )
 
 func vidDelRecHandler(w http.ResponseWriter, r *http.Request, p httprouter.Params) {

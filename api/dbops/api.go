@@ -1,12 +1,13 @@
 package dbops
 
 import (
-	_ "github.com/go-sql-driver/mysql"
-	"log"
 	"database/sql"
-	"joewt.com/joe/streamingmedia/video_server/api/defs"
-	"joewt.com/joe/streamingmedia/video_server/api/utils"
+	"log"
 	"time"
+
+	_ "github.com/go-sql-driver/mysql"
+	"github.com/yinrenxin/streamingmedia/api/defs"
+	"github.com/yinrenxin/streamingmedia/api/utils"
 )
 
 func AddUserCredential(loginName string, pwd string) error {
@@ -14,7 +15,7 @@ func AddUserCredential(loginName string, pwd string) error {
 	if err != nil {
 		return err
 	}
-	_, err = stmtIns.Exec(loginName,pwd)
+	_, err = stmtIns.Exec(loginName, pwd)
 	if err != nil {
 		return err
 	}
@@ -25,22 +26,22 @@ func AddUserCredential(loginName string, pwd string) error {
 func GetUserCredential(loginName string) (string, error) {
 	stmtOut, err := dbConn.Prepare("SELECT pwd FROM users WHERE login_name = ?")
 	if err != nil {
-		log.Printf("%s",err)
-		return "",nil
+		log.Printf("%s", err)
+		return "", nil
 	}
 	var pwd string
 	err = stmtOut.QueryRow(loginName).Scan(&pwd)
 	if err != nil && err != sql.ErrNoRows {
-		return "",nil
+		return "", nil
 	}
 	defer stmtOut.Close()
-	return pwd,nil
+	return pwd, nil
 }
 
 func DeleteUser(loginName string, pwd string) error {
 	stmtDel, err := dbConn.Prepare("DELETE FROM users WHERE login_name = ? AND pwd = ?")
 	if err != nil {
-		log.Printf("DeleteUser error: %s",err)
+		log.Printf("DeleteUser error: %s", err)
 		return err
 	}
 	_, err = stmtDel.Exec(loginName, pwd)
@@ -103,7 +104,6 @@ func DeleteVideoInfo(vid string) error {
 	return nil
 }
 
-
 func AddNewComments(vid string, aid int, content string) error {
 	id, err := utils.NewUUID()
 	if err != nil {
@@ -124,7 +124,7 @@ func AddNewComments(vid string, aid int, content string) error {
 	return nil
 }
 
-func ListComments(vid string, from , to int) ([]*defs.Comment, error){
+func ListComments(vid string, from, to int) ([]*defs.Comment, error) {
 	stmtOut, err := dbConn.Prepare(`SELECT comments.id, users.login_name, comments.content FROM comments
 									INNER JOIN users ON comments.author_id = users.id WHERE comments.video_id = ? AND 
 									comments.time > FROM_UNIXTIME(?) AND comments.time <= FROM_UNIXTIME(?)`)

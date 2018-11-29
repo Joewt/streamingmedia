@@ -6,7 +6,7 @@ import (
 	"os"
 	"sync"
 
-	"joewt.com/joe/streamingmedia/video_server/scheduler/dbops"
+	"github.com/yinrenxin/streamingmedia/scheduler/dbops"
 )
 
 func deleteVideo(vid string) error {
