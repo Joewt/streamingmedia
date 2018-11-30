@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"io"
 	"io/ioutil"
 	"net/http"
 
@@ -36,5 +37,6 @@ func CreateUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 }
 
 func Login(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-
+	uname := p.ByName("user_name")
+	io.WriteString(w, uname)
 }
