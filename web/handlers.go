@@ -1,7 +1,10 @@
 package main
 
 import (
+	"encoding/json"
 	"html/template"
+	"io"
+	"io/ioutil"
 	"log"
 	"net/http"
 
@@ -57,4 +60,21 @@ func userHomeHandler(w http.ResponseWriter, r *http.Request, ps httprouter.Param
 	}
 	t.Execute(w, p)
 	return
+}
+
+func apiHandler(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	if r.Method != http.MethodPost {
+		re, _ := json.Marshal(ErrorRequestNotRecognized)
+		io.WriteString(w, string(re))
+		return
+	}
+	res, _ := ioutil.ReadAll(r.Body)
+	apiBody := &ApiBody{}
+	if err := json.Unmarshal(res, apiBody); err != nil {
+		re, _ := json.Marshal(ErrorRequestBodyParseFailed)
+		io.WriteString(w, string(re))
+		return
+	}
+	request(apiBody, w, r)
+	defer r.Body.Close()
 }
