@@ -16,3 +16,5 @@ var (
 	ErrorRequestBodyParseFailed = Err{Error: "request body is failed", ErrorCode: "2002"}
 	ErrorInternalFaults         = Err{Error: "internal service error", ErrorCode: "2003"}
 )
+
+var streamServerUrl = "http://127.0.0.1:9000/"
