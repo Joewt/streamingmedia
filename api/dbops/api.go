@@ -120,6 +120,36 @@ func DeleteVideoInfo(vid string) error {
 	return nil
 }
 
+func ListVideoInfo(uname string, from, to int) ([]*defs.VideoInfo, error) {
+	stmtOut, err := dbConn.Prepare(`SELECT video_info.id, video_info.author_id, video_info.name, video_info.display_ctime FROM video_info
+		INNER JOIN users ON video_info.author_id = users.id
+		WHERE users.login_name=? AND video_info.create_time > FROM_UNIXTIME(?) AND video_info.create_time<=FROM_UNIXTIME(?)
+		OREDER BY video_info.create_time DESC`)
+
+	var res []*defs.VideoInfo
+	if err != nil {
+		return res, err
+	}
+	rows, err := stmtOut.Query(uname, from, to)
+	if err != nil {
+		log.Printf("%v", err)
+		return res, err
+	}
+
+	for rows.Next() {
+		var id, name, ctime string
+		var aid int
+		if err := rows.Scan(&id, &aid, &name, &ctime); err != nil {
+			return res, err
+		}
+		vi := &defs.VideoInfo{Id: id, AuthorId: aid, Name: name, DisplayCtime: ctime}
+		res = append(res, vi)
+	}
+	defer stmtOut.Close()
+	return res, nil
+
+}
+
 func AddNewComments(vid string, aid int, content string) error {
 	id, err := utils.NewUUID()
 	if err != nil {
