@@ -13,7 +13,7 @@ type SignedUp struct {
 type User struct {
 	Id        int
 	LoginName string
-	pwd       string
+	Pwd       string
 }
 
 type VideoInfo struct {

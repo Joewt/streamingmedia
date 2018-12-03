@@ -10,6 +10,22 @@ import (
 	"github.com/yinrenxin/streamingmedia/api/utils"
 )
 
+func GetUser(loginName string) (*defs.User, error) {
+	stmtOut, err := dbConn.Prepare(`SELECT id, pwd FROM users WHERE login_name = ?`)
+	if err != nil {
+		return nil, err
+	}
+	var id int
+	var pwd string
+	err = stmtOut.QueryRow(loginName).Scan(&id, &pwd)
+	if err != nil || err == sql.ErrNoRows {
+		return nil, err
+	}
+	res := &defs.User{Id: id, LoginName: loginName, Pwd: pwd}
+	defer stmtOut.Close()
+	return res, nil
+}
+
 func AddUserCredential(loginName string, pwd string) error {
 	stmtIns, err := dbConn.Prepare("INSERT INTO users (login_name, pwd) values(?,?)")
 	if err != nil {
@@ -127,7 +143,7 @@ func AddNewComments(vid string, aid int, content string) error {
 func ListComments(vid string, from, to int) ([]*defs.Comment, error) {
 	stmtOut, err := dbConn.Prepare(`SELECT comments.id, users.login_name, comments.content FROM comments
 									INNER JOIN users ON comments.author_id = users.id WHERE comments.video_id = ? AND 
-									comments.time > FROM_UNIXTIME(?) AND comments.time <= FROM_UNIXTIME(?)`)
+									comments.time > FROM_UNIXTIME(?) AND comments.time <= FROM_UNIXTIME(?) ORDER BY comments.time DESC`)
 
 	var res []*defs.Comment
 

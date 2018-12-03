@@ -2,8 +2,8 @@ package main
 
 import (
 	"encoding/json"
-	"io"
 	"io/ioutil"
+	"log"
 	"net/http"
 
 	"github.com/julienschmidt/httprouter"
@@ -37,6 +37,44 @@ func CreateUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 }
 
 func Login(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-	uname := p.ByName("user_name")
-	io.WriteString(w, uname)
+	res, _ := ioutil.ReadAll(r.Body)
+	ubody := &defs.UserCredential{}
+	if err := json.Unmarshal(res, ubody); err != nil {
+		log.Printf("%v", err)
+		sendErrorResponse(w, defs.ErrorRequestBodyParseFailed)
+		return
+	}
+	pwd, err := dbops.GetUserCredential(ubody.Username)
+	if err != nil || len(pwd) == 0 || pwd != ubody.Pwd {
+		sendErrorResponse(w, defs.ErrorNotAuthUser)
+		return
+	}
+	id := session.GenerateNewSessionId(ubody.Username)
+	ui := &defs.SignedIn{Success: true, SessionId: id}
+	if resp, err := json.Marshal(ui); err != nil {
+		sendErrorResponse(w, defs.ErrorInternalFaults)
+	} else {
+		sendNormalResponse(w, string(resp), 200)
+	}
+}
+
+func GetUserInfo(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+	if !ValidateUser(w, r) {
+		log.Printf("Unathorized user\n")
+		return
+	}
+	uname := p.ByName("username")
+	u, err := dbops.GetUser(uname)
+	if err != nil {
+		log.Printf("error get userinfo ", err)
+		sendErrorResponse(w, defs.ErrorDBError)
+		return
+	}
+
+	ui := &defs.UserInfo{Id: u.Id}
+	if resp, err := json.Marshal(ui); err != nil {
+		sendErrorResponse(w, defs.ErrorInternalFaults)
+	} else {
+		sendNormalResponse(w, string(resp), 200)
+	}
 }
